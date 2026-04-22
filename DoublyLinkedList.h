@@ -19,6 +19,49 @@ public:
     // Перевірки на розмір
     int size() const { return listSize; }
     bool is_empty() const { return listSize == 0; }
+    // Додай у public:
+    void push_front(T value) {
+        auto newNode = std::make_shared<Node<T>>(value);
+        if (is_empty()) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        listSize++;
+    }
+
+    void push_back(T value) {
+        auto newNode = std::make_shared<Node<T>>(value);
+        if (is_empty()) {
+            head = tail = newNode;
+        } else {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+        listSize++;
+    }
+
+    void insert_at(int index, T value) {
+        if (index < 0 || index > listSize) throw std::out_of_range("Index out of bounds");
+        if (index == 0) { push_front(value); return; }
+        if (index == listSize) { push_back(value); return; }
+
+        auto newNode = std::make_shared<Node<T>>(value);
+        auto current = head;
+        for (int i = 0; i < index; ++i) current = current->next;
+
+        auto prevNode = current->prev.lock(); // Використовуємо lock()
+
+        newNode->next = current;
+        newNode->prev = prevNode;
+        prevNode->next = newNode;
+        current->prev = newNode;
+
+        listSize++;
+    }
 };
 
 #endif
