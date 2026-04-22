@@ -16,10 +16,8 @@ private:
 public:
     DoublyLinkedList() : head(nullptr), tail(nullptr), listSize(0) {}
 
-    // Перевірки на розмір
     int size() const { return listSize; }
     bool is_empty() const { return listSize == 0; }
-    // Додай у public:
     void push_front(T value) {
         auto newNode = std::make_shared<Node<T>>(value);
         if (is_empty()) {
@@ -53,7 +51,7 @@ public:
         auto current = head;
         for (int i = 0; i < index; ++i) current = current->next;
 
-        auto prevNode = current->prev.lock(); // Використовуємо lock()
+        auto prevNode = current->prev.lock();
 
         newNode->next = current;
         newNode->prev = prevNode;
@@ -62,7 +60,6 @@ public:
 
         listSize++;
     }
-    // Додай нижче:
     void pop_front() {
         if (is_empty()) throw std::runtime_error("List is empty");
         if (head == tail) {
@@ -79,7 +76,7 @@ public:
         if (head == tail) {
             head = tail = nullptr;
         } else {
-            tail = tail->prev.lock(); // Миттєвий крок назад
+            tail = tail->prev.lock();
             tail->next = nullptr;
         }
         listSize--;
@@ -100,6 +97,36 @@ public:
         nextNode->prev = prevNode;
 
         listSize--;
+    }
+    T at(int index) const {
+        if (index < 0 || index >= listSize) throw std::out_of_range("Index out of bounds");
+        auto current = head;
+        for (int i = 0; i < index; ++i) current = current->next;
+        return current->data;
+    }
+
+    int find(T value) const {
+        auto current = head;
+        int index = 0;
+        while (current) {
+            if (current->data == value) return index;
+            current = current->next;
+            index++;
+        }
+        return -1;
+    }
+
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<U>& list) {
+        auto current = list.head;
+        os << "NULL <- ";
+        while (current) {
+            os << "[" << current->data << "]";
+            if (current->next) os << " <-> ";
+            current = current->next;
+        }
+        os << " -> NULL";
+        return os;
     }
 };
 
