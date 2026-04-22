@@ -51,6 +51,38 @@ public:
         current->next = newNode;
         listSize++;
     }
+    // Додай це нижче:
+    void pop_front() {
+        if (is_empty()) throw std::runtime_error("List is empty");
+        head = head->next;
+        listSize--;
+    }
+
+    void pop_back() {
+        if (is_empty()) throw std::runtime_error("List is empty");
+        if (listSize == 1) {
+            head = nullptr;
+        } else {
+            auto current = head;
+            while (current->next->next) {
+                current = current->next;
+            }
+            current->next = nullptr;
+        }
+        listSize--;
+    }
+
+    void remove_at(int index) {
+        if (index < 0 || index >= listSize) throw std::out_of_range("Index out of bounds");
+        if (index == 0) { pop_front(); return; }
+
+        auto current = head;
+        for (int i = 0; i < index - 1; ++i) {
+            current = current->next;
+        }
+        current->next = current->next->next;
+        listSize--;
+    }
 };
 
 #endif
