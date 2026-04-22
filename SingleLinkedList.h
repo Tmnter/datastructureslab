@@ -83,6 +83,37 @@ public:
         current->next = current->next->next;
         listSize--;
     }
+    T at(int index) const {
+        if (index < 0 || index >= listSize) throw std::out_of_range("Index out of bounds");
+        auto current = head;
+        for (int i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current->data;
+    }
+
+    int find(T value) const {
+        auto current = head;
+        int index = 0;
+        while (current) {
+            if (current->data == value) return index;
+            current = current->next;
+            index++;
+        }
+        return -1;
+    }
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream& os, const SingleLinkedList<U>& list) {
+        auto current = list.head;
+        os << "[";
+        while (current) {
+            os << current->data;
+            if (current->next) os << " -> ";
+            current = current->next;
+        }
+        os << "]";
+        return os;
+    }
 };
 
 #endif
