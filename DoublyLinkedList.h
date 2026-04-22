@@ -62,6 +62,45 @@ public:
 
         listSize++;
     }
+    // Додай нижче:
+    void pop_front() {
+        if (is_empty()) throw std::runtime_error("List is empty");
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev.reset();
+        }
+        listSize--;
+    }
+
+    void pop_back() {
+        if (is_empty()) throw std::runtime_error("List is empty");
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev.lock(); // Миттєвий крок назад
+            tail->next = nullptr;
+        }
+        listSize--;
+    }
+
+    void remove_at(int index) {
+        if (index < 0 || index >= listSize) throw std::out_of_range("Index out of bounds");
+        if (index == 0) { pop_front(); return; }
+        if (index == listSize - 1) { pop_back(); return; }
+
+        auto current = head;
+        for (int i = 0; i < index; ++i) current = current->next;
+
+        auto prevNode = current->prev.lock();
+        auto nextNode = current->next;
+
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
+
+        listSize--;
+    }
 };
 
 #endif
